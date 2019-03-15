@@ -60,7 +60,7 @@ def train(args):
         # X_val_noisy = X_docs_noisy[-n_val:]
         X_train_noisy = X_docs_noisy[train_idx]
         X_val_noisy = X_docs_noisy[val_idx]
-        print 'added %s noise' % args.noise
+        print('added %s noise' % args.noise)
     else:
         X_train_noisy = X_train
         X_val_noisy = X_val
@@ -71,14 +71,14 @@ def train(args):
     ae.fit([X_train_noisy, X_train], [X_val_noisy, X_val], nb_epoch=args.n_epoch, \
             batch_size=args.batch_size, feature_weights=None, contractive=args.contractive)
 
-    print 'runtime: %ss' % (timeit.default_timer() - start)
+    print('runtime: %ss' % (timeit.default_timer() - start))
 
     if args.save_model:
         arch_file  = args.save_model + '.arch'
         weights_file  = args.save_model + '.weights'
         save_model(ae, arch_file, weights_file)
-        print 'Saved model arch and weights file to %s and %s, respectively.' \
-            % (arch_file, weights_file)
+        print('Saved model arch and weights file to %s and %s, respectively.'
+              % (arch_file, weights_file))
 
     if args.output:
         train_doc_codes = ae.encoder.predict(X_train)
@@ -86,7 +86,7 @@ def train(args):
         doc_keys = np.array(doc_keys)
         dump_json(dict(zip(doc_keys[train_idx].tolist(), train_doc_codes.tolist())), args.output)
         dump_json(dict(zip(doc_keys[val_idx].tolist(), val_doc_codes.tolist())), args.output + '.val')
-        print 'Saved doc codes file to %s and %s' % (args.output, args.output + '.val')
+        print('Saved doc codes file to %s and %s' % (args.output, args.output + '.val'))
 
 
 

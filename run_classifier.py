@@ -69,15 +69,15 @@ def main():
         Y_new_train = Y_train[train_idx]
         X_new_val = X_train[val_idx]
         Y_new_val = Y_train[val_idx]
-        print 'train: %s, val: %s, test: %s' % (X_new_train.shape[0], X_new_val.shape[0], X_test.shape[0])
+        print('train: %s, val: %s, test: %s' % (X_new_train.shape[0], X_new_val.shape[0], X_test.shape[0]))
         if args.multilabel_clf:
             results = multilabel_classifier(X_new_train, Y_new_train, X_new_val, Y_new_val, \
                     X_test, Y_test, nb_epoch=args.n_epoch, batch_size=args.batch_size, seed=seed)
-            print 'f1 score on test set: macro_f1: %s, micro_f1: %s' % tuple(results)
+            print('f1 score on test set: macro_f1: %s, micro_f1: %s' % tuple(results))
         else:
             results = multiclass_classifier(X_new_train, Y_new_train, X_new_val, Y_new_val, \
                     X_test, Y_test, nb_epoch=args.n_epoch, batch_size=args.batch_size, seed=seed)
-            print 'acc on test set: %s' % results
+            print('acc on test set: %s' % results)
     else:
         X = np.concatenate((X_train, X_test), axis=0)
         Y = np.concatenate((Y_train, Y_test), axis=0)
@@ -103,13 +103,14 @@ def main():
             macro_std = np.std(macro_f1)
             micro_mean = np.mean(micro_f1)
             micro_std = np.std(micro_f1)
-            print 'f1 score on %s-fold cross validation: macro_f1: %s (%s), micro_f1: %s (%s)' \
-                    % (int(args.cross_validation), macro_mean, macro_std, micro_mean, micro_std)
+            print('f1 score on %s-fold cross validation: macro_f1: %s (%s), micro_f1: %s (%s)'
+                  % (int(args.cross_validation), macro_mean, macro_std, micro_mean, micro_std))
         else:
             mean = np.mean(results)
             std = np.std(results)
-            print 'acc on %s-fold cross validation: %s (%s)' % (int(args.cross_validation), mean, std)
+            print('acc on %s-fold cross validation: %s (%s)' % (int(args.cross_validation), mean, std))
     import pdb;pdb.set_trace()
+
 
 if __name__ == '__main__':
     main()

@@ -47,7 +47,7 @@ class AutoEncoder(object):
         encoded = encoded_layer(input_layer)
 
         if self.comp_topk:
-            print 'add k-competitive layer'
+            print('add k-competitive layer')
             encoded = KCompetitive(self.comp_topk, self.ctype)(encoded)
 
         # "decoded" is the lossy reconstruction of the input
@@ -72,28 +72,30 @@ class AutoEncoder(object):
         # optimizer = Adam()
         # optimizer = Adagrad()
         if contractive:
-            print 'Using contractive loss, lambda: %s' % contractive
+            print('Using contractive loss, lambda: %s' % contractive)
             self.autoencoder.compile(optimizer=optimizer, loss=contractive_loss(self, contractive))
         else:
-            print 'Using binary crossentropy'
-            self.autoencoder.compile(optimizer=optimizer, loss='binary_crossentropy') # kld, binary_crossentropy, mse
+            print('Using binary crossentropy')
+            self.autoencoder.compile(optimizer=optimizer, loss='binary_crossentropy')  # kld, binary_crossentropy, mse
 
         self.autoencoder.fit(train_X[0], train_X[1],
-                        epochs=nb_epoch,
-                        batch_size=batch_size,
-                        shuffle=True,
-                        validation_data=(val_X[0], val_X[1]),
-                        callbacks=[
-                                    ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=3, min_lr=0.01),
-                                    EarlyStopping(monitor='val_loss', min_delta=1e-5, patience=5, verbose=1, mode='auto'),
-                                    CustomModelCheckpoint(self.encoder, self.save_model, monitor='val_loss', save_best_only=True, mode='auto')
-                        ]
-                        )
+                             epochs=nb_epoch,
+                             batch_size=batch_size,
+                             shuffle=True,
+                             validation_data=(val_X[0], val_X[1]),
+                             callbacks=[
+                                 ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=3, min_lr=0.01),
+                                 EarlyStopping(monitor='val_loss', min_delta=1e-5, patience=5, verbose=1, mode='auto'),
+                                 CustomModelCheckpoint(
+                                     self.encoder, self.save_model, monitor='val_loss', save_best_only=True, mode='auto')]
+                             )
 
         return self
 
+
 def save_ae_model(model, model_file):
     model.save(model_file)
+
 
 def load_ae_model(model_file):
     return load_keras_model(model_file, custom_objects={"KCompetitive": KCompetitive})

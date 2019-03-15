@@ -33,7 +33,7 @@ def main():
         for each in queries:
             words.append(get_similar_words(w2v, each, topn=5))
         write_file(words, args.sample_words)
-        print 'Saved sample words file to %s' % args.sample_words
+        print('Saved sample words file to %s' % args.sample_words)
 
 
     import pdb;pdb.set_trace()

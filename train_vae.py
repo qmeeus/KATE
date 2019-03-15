@@ -43,7 +43,7 @@ def train(args):
     vae = VarAutoEncoder(n_vocab, args.n_dim, comp_topk=args.comp_topk, ctype=args.ctype, save_model=args.save_model)
     vae.fit([X_train, X_train], [X_val, X_val], nb_epoch=args.n_epoch, batch_size=args.batch_size)
 
-    print 'runtime: %ss' % (timeit.default_timer() - start)
+    print('runtime: %ss' % (timeit.default_timer() - start))
 
 def main():
     parser = argparse.ArgumentParser()

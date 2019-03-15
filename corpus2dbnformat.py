@@ -30,7 +30,7 @@ def main():
 
     out_dir = args.out_dir
     # attributes
-    attrs = zip(*sorted(vocab.iteritems(), key=lambda d:[1]))[0]
+    attrs = zip(*sorted(vocab.items(), key=lambda d:[1]))[0]
     dump_pickle(attrs, os.path.join(out_dir, 'attributes.p'))
 
     # batches

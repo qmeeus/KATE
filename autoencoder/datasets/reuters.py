@@ -38,7 +38,7 @@ class CorpusIterReuters(object):
                         yield [words, [did]]
                     else:
                         yield words
-        print count
+        print(count)
 
 def load_data(path_list, test_split, seed=666):
     '''Loads the Reuters RCV1-v2 newswire dataset.
@@ -77,7 +77,7 @@ def construct_corpus(doc_word_freq, word_freq, training_phase, vocab_dict=None, 
         vocab_dict = build_vocab(word_freq, threshold=threshold, topn=topn)
 
     docs = generate_bow(doc_word_freq, vocab_dict)
-    new_word_freq = dict([(vocab_dict[word], freq) for word, freq in word_freq.iteritems() if word in vocab_dict])
+    new_word_freq = dict([(vocab_dict[word], freq) for word, freq in word_freq.items() if word in vocab_dict])
 
     return docs, vocab_dict, new_word_freq
 
@@ -88,13 +88,13 @@ def construct_train_test_corpus(path_list, test_split, output, threshold=10, top
     train_docs, vocab_dict, train_word_freq = construct_corpus(train_data, train_word_freq, True, threshold=threshold, topn=topn)
     train_corpus = {'docs': train_docs, 'vocab': vocab_dict, 'word_freq': train_word_freq}
     dump_json(train_corpus, os.path.join(output, 'train.corpus'))
-    print 'Generated training corpus'
+    print('Generated training corpus')
 
     test_word_freq = count_words(test_data.values())
     test_docs, _, _ = construct_corpus(test_data, test_word_freq, False, vocab_dict=vocab_dict)
     test_corpus = {'docs': test_docs, 'vocab': vocab_dict}
     dump_json(test_corpus, os.path.join(output, 'test.corpus'))
-    print 'Generated test corpus'
+    print('Generated test corpus')
 
 def extract_labels(docs, path, output):
     # it will be fast if docs is a dict instead of a list
@@ -104,7 +104,7 @@ def extract_labels(docs, path, output):
             label, did, _ = line.strip('\n').split()
             if did in docs:
                 doc_labels[did].add(label)
-    doc_labels = dict([(x, list(y)) for x, y in doc_labels.iteritems()])
+    doc_labels = dict([(x, list(y)) for x, y in doc_labels.items()])
     dump_json(doc_labels, output)
 
     return doc_labels

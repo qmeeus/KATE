@@ -35,7 +35,7 @@ def train(args):
 
     start = timeit.default_timer()
     d2v.train(corpus_iter)
-    print 'runtime: %ss' % (timeit.default_timer() - start)
+    print('runtime: %ss' % (timeit.default_timer() - start))
 
     save_doc2vec(d2v.model, args.save_model)
     import pdb;pdb.set_trace()

@@ -25,11 +25,11 @@ def train(args):
     doc_keys = docs.keys()
     for k in doc_keys:
         bows = []
-        for idx, count in docs[k].iteritems():
+        for idx, count in docs[k].items():
             bows.append((int(idx), count))
         doc_bow.append(bows)
         del docs[k]
-    vocab_dict = dict([(int(y), x) for x, y in vocab_dict.iteritems()])
+    vocab_dict = dict([(int(y), x) for x, y in vocab_dict.items()])
 
     n_samples = len(doc_bow)
     doc_bow = np.array(doc_bow)
@@ -42,13 +42,13 @@ def train(args):
 
     start = timeit.default_timer()
     lda = train_lda(dbow_train, vocab_dict, args.n_topics, args.n_iter, args.save_model)
-    print 'runtime: %ss' % (timeit.default_timer() - start)
+    print('runtime: %ss' % (timeit.default_timer() - start))
 
     if args.output:
         doc_keys = np.array(doc_keys)
         generate_doc_codes(lda, dict(zip(doc_keys[train_idx].tolist(), dbow_train)), args.output + '.train')
         generate_doc_codes(lda, dict(zip(doc_keys[val_idx].tolist(), dbow_val)), args.output + '.val')
-        print 'Saved doc codes file to %s and %s' % (args.output + '.train', args.output + '.val')
+        print('Saved doc codes file to %s and %s' % (args.output + '.train', args.output + '.val'))
 
 def test(args):
     corpus = load_corpus(args.corpus)
@@ -56,14 +56,14 @@ def test(args):
     doc_bow = {}
     for k in docs.keys():
         bows = []
-        for idx, count in docs[k].iteritems():
+        for idx, count in docs[k].items():
             bows.append((int(idx), count))
         doc_bow[k]= bows
         del docs[k]
 
     lda = load_model(args.load_model)
     generate_doc_codes(lda, doc_bow, args.output)
-    print 'Saved doc codes file to %s' % args.output
+    print('Saved doc codes file to %s' % args.output)
 
 
     if args.word_clouds:
@@ -82,20 +82,20 @@ def test(args):
         # weights = unitmatrix(weights, axis=1) # normalize
         word_cloud(weights.T, vocab, queries, save_file=args.word_clouds)
 
-        print 'Saved word clouds file to %s' % args.word_clouds
+        print('Saved word clouds file to %s' % args.word_clouds)
 
     if args.save_topics:
         topics_prob = show_topics_prob(lda)
         save_topics_prob(topics_prob, args.save_topics)
         # topics = show_topics(lda)
         # write_file(topics, args.save_topics)
-        print 'Saved topics file to %s' % args.save_topics
+        print('Saved topics file to %s' % args.save_topics)
 
     if args.calc_distinct:
         # mean, std = calc_pairwise_cosine(lda)
-        # print 'Average pairwise angle (pi): %s (%s)' % (mean / math.pi, std / math.pi)
+        # print('Average pairwise angle (pi): %s (%s)' % (mean / math.pi, std / math.pi))
         sd = calc_pairwise_dev(lda)
-        print 'Average squared deviation from 0 (90 degree): %s' % sd
+        print('Average squared deviation from 0 (90 degree): %s' % sd)
 
 def save_topics_prob(topics_prob, out_file):
     try:

@@ -46,11 +46,11 @@ class CorpusIterWiki10plus(object):
                         yield words
             except Exception as e:
                 raise e
-        print count
+        print(count)
 
 def extract_contents(text, out_file):
-    if not isinstance(text, unicode):
-        text = text.decode('utf-8')
+    # if not isinstance(text, unicode):
+    #     text = text.decode('utf-8')
     contents = ' '.join(prog.findall(text))
     contents = tiny_tokenize_xml(contents, False, cached_stop_words)
     with open(out_file, 'w') as f:
@@ -73,8 +73,8 @@ def xml2text(in_dir, out_dir, white_list=None):
         except Exception as e:
             raise e
         if count % 500 == 0:
-            print 'processed %s' % count
-    print 'processed %s docs, discarded %s docs' % (count, len(files) - count)
+            print('processed %s' % count)
+    print('processed %s docs, discarded %s docs' % (count, len(files) - count))
 
 def load_data(corpus_dir, test_split, seed=666, stem=True):
     '''Loads the Wiki10+ dataset.
@@ -102,7 +102,7 @@ def load_data(corpus_dir, test_split, seed=666, stem=True):
         except Exception as e:
             raise e
         if count % 500 == 0:
-            print count
+            print(count)
 
     corpus = corpus.items()
     np.random.seed(seed)
@@ -121,13 +121,13 @@ def construct_train_test_corpus(corpus_dir, test_split, output, threshold=10, to
     train_docs, vocab_dict, train_word_freq = construct_corpus(train_data, train_word_freq, True, threshold=threshold, topn=topn)
     train_corpus = {'docs': train_docs, 'vocab': vocab_dict, 'word_freq': train_word_freq}
     dump_json(train_corpus, os.path.join(output, 'train.corpus'))
-    print 'Generated training corpus'
+    print('Generated training corpus')
 
     test_word_freq = count_words(test_data.values())
     test_docs, _, _ = construct_corpus(test_data, test_word_freq, False, vocab_dict=vocab_dict)
     test_corpus = {'docs': test_docs, 'vocab': vocab_dict}
     dump_json(test_corpus, os.path.join(output, 'test.corpus'))
-    print 'Generated test corpus'
+    print('Generated test corpus')
 
 def extract_labels(docs, labels, output):
     # it will be fast if docs is a dict instead of a list

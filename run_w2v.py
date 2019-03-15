@@ -28,14 +28,14 @@ def train(args):
     # corpus = CorpusIterMRD(args.corpus[0], load_json(args.docnames), stem=True, with_docname=False)
     # corpus = CorpusIterWiki10plus(args.corpus[0], load_json(args.docnames), stem=True, with_docname=False)
     # corpus = CorpusIterReuters(args.corpus, load_json(args.docnames), with_docname=False)
-    # print len([1 for x in corpus])
+    # print(len([1 for x in corpus]))
     corpus_iter = lambda: ([word for word in sentence if word in vocab] for sentence in corpus)
     w2v = Word2Vec(args.n_dim, window=args.window_size, \
         negative=args.negative, epoches=args.n_epoch)
 
     start = timeit.default_timer()
     w2v.train(corpus_iter)
-    print 'runtime: %ss' % (timeit.default_timer() - start)
+    print('runtime: %ss' % (timeit.default_timer() - start))
 
     save_w2v(w2v.model, args.save_model)
     import pdb;pdb.set_trace()

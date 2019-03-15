@@ -50,11 +50,11 @@ def main():
         Y_new_train = Y_train[train_idx]
         X_new_val = X_train[val_idx]
         Y_new_val = Y_train[val_idx]
-        print 'train: %s, val: %s, test: %s' % (X_new_train.shape[0], X_new_val.shape[0], X_test.shape[0])
+        print('train: %s, val: %s, test: %s' % (X_new_train.shape[0], X_new_val.shape[0], X_test.shape[0]))
 
         results = neural_regression(X_new_train, Y_new_train, X_new_val, Y_new_val, \
                 X_test, Y_test, nb_epoch=args.n_epoch, batch_size=args.batch_size, seed=seed)
-        print 'r2 score on test set: %s' % results
+        print('r2 score on test set: %s' % results)
     else:
         X = np.concatenate((X_train, X_test), axis=0)
         Y = np.concatenate((Y_train, Y_test), axis=0)
@@ -71,7 +71,7 @@ def main():
                 X[test_idx], Y[test_idx], nb_epoch=args.n_epoch, batch_size=args.batch_size, seed=seed))
         mean = np.mean(results)
         std = np.std(results)
-        print 'r2 score on %s cross validation: %s (%s)' % (int(args.cross_validation), mean, std)
+        print('r2 score on %s cross validation: %s (%s)' % (int(args.cross_validation), mean, std))
     import pdb;pdb.set_trace()
 
 if __name__ == '__main__':

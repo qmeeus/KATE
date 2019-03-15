@@ -34,7 +34,7 @@ def load_w2v(file):
 
 def doc_word2vec(model, corpus, vocab, output, avg=True):
     doc_codes = {}
-    for key, bow in corpus.iteritems():
+    for key, bow in corpus.items():
         vec = get_doc_codes(model, bow, vocab, avg)
         doc_codes[key] = vec.tolist()
     dump_json(doc_codes, output)

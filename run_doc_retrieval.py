@@ -68,11 +68,11 @@ def main():
     Y_new_train = Y_train[train_idx]
     X_new_val = X_train[val_idx]
     Y_new_val = Y_train[val_idx]
-    print 'train: %s, val: %s, test: %s' % (X_new_train.shape[0], X_new_val.shape[0], X_test.shape[0])
+    print('train: %s, val: %s, test: %s' % (X_new_train.shape[0], X_new_val.shape[0], X_test.shape[0]))
 
     results = retrieval(X_new_train, Y_new_train, X_new_val, Y_new_val,\
                         fractions=[0.001], multilabel=args.multilabel)
-    print 'precision on val set: %s' % results
+    print('precision on val set: %s' % results)
 
     if not args.query_info:
         results = retrieval(X_train, Y_train, X_test, Y_test,\
@@ -81,7 +81,7 @@ def main():
         query_docs = load_corpus(args.query_info)['docs']
         len_test = [sum(query_docs[i].values()) for i in test_doc_codes]
         results = retrieval_by_doclength(X_train, Y_train, X_test, Y_test, len_test, fraction=0.001, multilabel=args.multilabel)
-    print 'precision on test set: %s' % results
+    print('precision on test set: %s' % results)
     import pdb;pdb.set_trace()
 
 if __name__ == '__main__':

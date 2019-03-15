@@ -39,4 +39,4 @@ class CorpusIter20News(object):
                         yield words
             except Exception as e:
                 raise e
-        print count
+        print(count)

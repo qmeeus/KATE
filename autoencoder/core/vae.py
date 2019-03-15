@@ -46,14 +46,14 @@ class VarAutoEncoder(object):
         h1 = hidden_layer1(input_layer)
 
         # if self.comp_topk and self.comp_topk[0] != -1:
-        #     print 'add k-competitive layer'
+        #     print('add k-competitive layer')
         #     h1 = KCompetitive(self.comp_topk[0], self.ctype)(h1)
 
         self.z_mean = Dense(self.dim[1], kernel_initializer='glorot_normal')(h1)
         self.z_log_var = Dense(self.dim[1], kernel_initializer='glorot_normal')(h1)
 
         if self.comp_topk and self.comp_topk[1] != -1:
-            print 'add k-competitive layer'
+            print('add k-competitive layer')
             self.z_mean = KCompetitive(self.comp_topk[1], self.ctype)(self.z_mean)
 
         # note that "output_shape" isn't necessary with the TensorFlow backend
@@ -76,7 +76,7 @@ class VarAutoEncoder(object):
         self.decoder = Model(outputs=_x_decoded_mean, inputs=decoder_input)
 
     def fit(self, train_X, val_X, nb_epoch=50, batch_size=100):
-        print 'Training variational autoencoder'
+        print('Training variational autoencoder')
         optimizer = Adadelta(lr=2.)
         self.vae.compile(optimizer=optimizer, loss=self.vae_loss)
 
@@ -109,7 +109,7 @@ class VarAutoEncoder(object):
     #             xent_loss = K.dot(x, y)
     #             kl_loss = - 0.5 * K.sum(1 + self.z_log_var - K.square(self.z_mean) - K.exp(self.z_log_var), axis=-1)
     #         except Exception as e:
-    #             print e
+    #             print(e)
     #             import pdb;pdb.set_trace()
     #         return xent_loss + kl_loss
     #     return loss

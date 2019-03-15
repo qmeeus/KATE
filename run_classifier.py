@@ -1,9 +1,3 @@
-'''
-Created on Dec, 2016
-
-@author: hugo
-
-'''
 from __future__ import absolute_import
 import argparse
 import numpy as np
@@ -14,6 +8,7 @@ from sklearn.model_selection import ShuffleSplit
 
 from autoencoder.testing.classifier import multiclass_classifier, multilabel_classifier
 from autoencoder.utils.io_utils import load_json, load_pickle
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -71,12 +66,14 @@ def main():
         Y_new_val = Y_train[val_idx]
         print('train: %s, val: %s, test: %s' % (X_new_train.shape[0], X_new_val.shape[0], X_test.shape[0]))
         if args.multilabel_clf:
-            results = multilabel_classifier(X_new_train, Y_new_train, X_new_val, Y_new_val, \
-                    X_test, Y_test, nb_epoch=args.n_epoch, batch_size=args.batch_size, seed=seed)
+            results = multilabel_classifier(X_new_train, Y_new_train, X_new_val, Y_new_val,
+                                            X_test, Y_test, nb_epoch=args.n_epoch, batch_size=args.batch_size,
+                                            seed=seed)
             print('f1 score on test set: macro_f1: %s, micro_f1: %s' % tuple(results))
         else:
-            results = multiclass_classifier(X_new_train, Y_new_train, X_new_val, Y_new_val, \
-                    X_test, Y_test, nb_epoch=args.n_epoch, batch_size=args.batch_size, seed=seed)
+            results = multiclass_classifier(X_new_train, Y_new_train, X_new_val, Y_new_val,
+                                            X_test, Y_test, nb_epoch=args.n_epoch, batch_size=args.batch_size,
+                                            seed=seed)
             print('acc on test set: %s' % results)
     else:
         X = np.concatenate((X_train, X_test), axis=0)
@@ -90,12 +87,13 @@ def main():
             Y_new_train = Y[new_train_idx]
             X_new_val = X[val_idx]
             Y_new_val = Y[val_idx]
-            if args.multilabel_clf:
-                results.append(multilabel_classifier(X_new_train, Y_new_train, X_new_val, Y_new_val, \
-                        X_test, Y_test, nb_epoch=args.n_epoch, batch_size=args.batch_size, seed=seed))
-            else:
-                results.append(multiclass_classifier(X_new_train, Y_new_train, X_new_val, Y_new_val, \
-                    X[test_idx], Y[test_idx], nb_epoch=args.n_epoch, batch_size=args.batch_size, seed=seed))
+            X_test = X_test if args.multilabel_clf else X[test_idx]
+            Y_test = Y_test if args.multilabel_clf else Y[test_idx]
+
+            results.append(
+                multilabel_classifier(X_new_train, Y_new_train, X_new_val, Y_new_val, X_test, Y_test,
+                                      nb_epoch=args.n_epoch, batch_size=args.batch_size, seed=seed)
+            )
 
         if args.multilabel_clf:
             macro_f1, micro_f1 = zip(*results)
@@ -109,7 +107,8 @@ def main():
             mean = np.mean(results)
             std = np.std(results)
             print('acc on %s-fold cross validation: %s (%s)' % (int(args.cross_validation), mean, std))
-    import pdb;pdb.set_trace()
+
+    # import pdb; pdb.set_trace()
 
 
 if __name__ == '__main__':

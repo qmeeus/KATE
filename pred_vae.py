@@ -26,10 +26,9 @@ from autoencoder.utils.io_utils import dump_json, write_file
 # def print_topics(topics):
 #     for i in range(len(topics)):
 #         str_topic = ' + '.join(['%s * %s' % (prob, token) for token, prob in topics[i]])
-#         print 'topic %s:' % i
-#         print str_topic
-#         print
-
+#         print('topic %s:' % i)
+#         print(str_topic)
+#         print()
 def test(args):
     corpus = load_corpus(args.input)
     vocab, docs = corpus['vocab'], corpus['docs']
@@ -46,12 +45,12 @@ def test(args):
 
     doc_codes = vae.predict(X_docs)
     dump_json(dict(zip(doc_keys, doc_codes.tolist())), args.output)
-    print 'Saved doc codes file to %s' % args.output
+    print('Saved doc codes file to %s' % args.output)
 
     # if args.save_topics:
     #     topics = get_topics(vae, revdict(vocab), topn=10)
     #     write_file(topics, args.save_topics)
-    #     print 'Saved topics file to %s' % args.save_topics
+    #     print('Saved topics file to %s' % args.save_topics)
 
 def main():
     parser = argparse.ArgumentParser()

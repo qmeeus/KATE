@@ -24,7 +24,7 @@ def generate_doc_codes(model, corpus, output):
     model.minimum_probability = 1e-3
     n_topics = model.num_topics
     doc_codes = {}
-    for key, doc_bow in corpus.iteritems():
+    for key, doc_bow in corpus.items():
         code = np.zeros(n_topics)
         for idx, val in model[doc_bow]:
             code[idx] = val

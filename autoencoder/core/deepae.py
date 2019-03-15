@@ -56,12 +56,12 @@ class DeepAutoEncoder(object):
 
         if self.comp_topk:
             encoded = KCompetitive(self.comp_topk)(encoded)
-            print 'add k-competitive layer'
+            print('add k-competitive layer')
 
         encoded = encoded_layer(encoded)
         if self.comp_topk:
             encoded = KCompetitive(self.comp_topk)(encoded)
-            print 'add k-competitive layer'
+            print('add k-competitive layer')
 
         # "decoded" is the lossy reconstruction of the input
         decoder_layer = Dense_tied(h1_dim, init='glorot_normal', activation='tanh', tied_to=encoded_layer)
@@ -70,7 +70,7 @@ class DeepAutoEncoder(object):
 
         if self.comp_topk:
             decoded = KCompetitive(self.comp_topk)(decoded)
-            print 'add k-competitive layer'
+            print('add k-competitive layer')
 
         decoded = rev_h1_layer(decoded)
 
@@ -88,17 +88,17 @@ class DeepAutoEncoder(object):
 
         if not weights_file is None:
             self.autoencoder.load_weights(weights_file, by_name=True)
-            print 'Loaded pretrained weights'
+            print('Loaded pretrained weights')
 
     def fit(self, train_X, val_X, nb_epoch=50, batch_size=100, feature_weights=None):
-        print 'Training autoencoder'
+        print('Training autoencoder')
         optimizer = Adadelta(lr=1.5)
         # optimizer = Adam()
         # optimizer = Adagrad()
         if feature_weights is None:
             self.autoencoder.compile(optimizer=optimizer, loss='binary_crossentropy') # kld, binary_crossentropy, mse
         else:
-            print 'Using weighted loss'
+            print('Using weighted loss')
             self.autoencoder.compile(optimizer=optimizer, loss=weighted_binary_crossentropy(feature_weights)) # kld, binary_crossentropy, mse
 
         self.autoencoder.fit(train_X[0], train_X[1],

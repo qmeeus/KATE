@@ -7,7 +7,6 @@ Created on Jan, 2017
 from __future__ import absolute_import
 import timeit
 import argparse
-from os import path
 import numpy as np
 
 from autoencoder.core.vae import VarAutoEncoder, load_vae_model, save_vae_model
@@ -19,10 +18,10 @@ from autoencoder.utils.io_utils import dump_json
 def train(args):
     corpus = load_corpus(args.input)
     n_vocab, docs = len(corpus['vocab']), corpus['docs']
-    corpus.clear() # save memory
+    corpus.clear()  # save memory
 
     X_docs = []
-    for k in docs.keys():
+    for k in list(docs.keys()):
         X_docs.append(vecnorm(doc2vec(docs[k], n_vocab), 'logmax1', 0))
         del docs[k]
 
@@ -43,12 +42,13 @@ def train(args):
     vae = VarAutoEncoder(n_vocab, args.n_dim, comp_topk=args.comp_topk, ctype=args.ctype, save_model=args.save_model)
     vae.fit([X_train, X_train], [X_val, X_val], nb_epoch=args.n_epoch, batch_size=args.batch_size)
 
-    print 'runtime: %ss' % (timeit.default_timer() - start)
+    print('runtime: %ss' % (timeit.default_timer() - start))
+
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--input', type=str, required=True, help='path to the input corpus file')
-    parser.add_argument('-nd', '--n_dim', nargs='*', type=int, help='num of dimensions')
+    parser.add_argument('-nd', '--n_dim', nargs='*', default=[500, 128], type=int, help='num of dimensions')
     parser.add_argument('-ne', '--n_epoch', type=int, default=100, help='num of epoches (default 100)')
     parser.add_argument('-bs', '--batch_size', type=int, default=100, help='batch size (default 100)')
     parser.add_argument('-nv', '--n_val', type=int, default=1000, help='size of validation set (default 1000)')
@@ -58,6 +58,7 @@ def main():
     args = parser.parse_args()
 
     train(args)
+
 
 if __name__ == '__main__':
     main()

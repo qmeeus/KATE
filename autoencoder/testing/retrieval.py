@@ -32,7 +32,7 @@ def retrieval(X_train, Y_train, X_test, Y_test, fractions=[0.01, 0.5, 1.0], mult
             ntop = int(fr * db_size)
             pr = float(len([i for i in retrieval_idx[:ntop] if hit(Y_train[i], target, multilabel)])) / ntop
             precisions[fr] += pr
-    precisions = dict([(x, y / n_queries) for x, y in precisions.iteritems()])
+    precisions = dict([(x, y / n_queries) for x, y in precisions.items()])
 
     return sorted(precisions.items(), key=lambda d:d[0])
 
@@ -54,7 +54,7 @@ def retrieval_by_doclength(X_train, Y_train, X_test, Y_test, len_test, fraction=
                 precisions[each].append(pr)
                 break
     import pdb;pdb.set_trace()
-    precisions = dict([(x, sum(y) / len(y)) for x, y in precisions.iteritems()])
+    precisions = dict([(x, sum(y) / len(y)) for x, y in precisions.items()])
 
     return sorted(precisions.items(), key=lambda d:d[0])
 
@@ -76,9 +76,9 @@ def retrieval_perlabel(X_train, Y_train, X_test, Y_test, fractions=[0.01, 0.5, 1
             except:
                 precisions[fr][Y_test[idx]] = pr
     new_pr = {}
-    for fr, val in precisions.iteritems():
+    for fr, val in precisions.items():
         avg_pr = 0.
-        for label, pr in val.iteritems():
+        for label, pr in val.items():
             avg_pr += pr / label_counter[label]
         new_pr[fr] = avg_pr / len(label_counter)
 

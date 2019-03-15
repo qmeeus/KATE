@@ -41,8 +41,8 @@ def multiclass_classifier(X_train, Y_train, X_val, Y_val, X_test, Y_test, nb_epo
     # confusion matrix and precision-recall
     true = np.argmax(Y_test,axis=1)
     pred = np.argmax(clf.predict(X_test), axis=1)
-    print confusion_matrix(true, pred)
-    print classification_report(true, pred)
+    print(confusion_matrix(true, pred))
+    print(classification_report(true, pred))
     return acc
 
 def multilabel_classifier(X_train, Y_train, X_val, Y_val, X_test, Y_test, nb_epoch=200, batch_size=10, seed=7):

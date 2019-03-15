@@ -21,7 +21,7 @@ def calc_word_sim(model, eval_file):
             sys.append(model.similarity(row[col1], row[col2]))
 
     # compute Spearman's rank correlation coefficient (https://en.wikipedia.org/wiki/Spearman%27s_rank_correlation_coefficient)
-    print sys
+    print(sys)
     # import pdb;pdb.set_trace()
     corr, p_val = stats.spearmanr(sys, ground)
     logger.info("# of pairs found: %s / %s" % (len(ground), len(df)))

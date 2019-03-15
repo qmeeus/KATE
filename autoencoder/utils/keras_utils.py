@@ -18,6 +18,7 @@ import warnings
 from ..testing.visualize import heatmap
 from .op_utils import unitmatrix
 
+
 def contractive_loss(model, lam=1e-4):
     def loss(y_true, y_pred):
         ent_loss = K.mean(K.binary_crossentropy(y_pred, y_true), axis=-1)
@@ -28,9 +29,10 @@ def contractive_loss(model, lam=1e-4):
         dh = h * (1 - h)  # N_batch x N_hidden
 
         # N_batch x N_hidden * N_hidden x 1 = N_batch x 1
-        contractive = lam * K.sum(dh**2 * K.sum(W**2, axis=1), axis=1)
+        contractive = lam * K.sum(dh ** 2 * K.sum(W ** 2, axis=1), axis=1)
 
         return ent_loss + contractive
+
     return loss
 
 
@@ -44,10 +46,11 @@ def weighted_binary_crossentropy(feature_weights):
         #     y2 = tf.div(y_true, tf.reshape(K.sum(y_true, 1), [-1, 1]))
         #     z = K.sum(tf.mul(x, y2), 1)
         # except Exception as e:
-        #     print e
+        #     print(e)
         #     import pdb;pdb.set_trace()
         # return z
         return K.dot(K.binary_crossentropy(y_pred, y_true), K.variable(feature_weights.astype('float32')))
+
     return loss
 
 
@@ -56,6 +59,7 @@ class KCompetitive(Layer):
 
     # Arguments
     '''
+
     def __init__(self, topk, ctype, **kwargs):
         self.topk = topk
         self.ctype = ctype
@@ -78,7 +82,7 @@ class KCompetitive(Layer):
         return dict(list(base_config.items()) + list(config.items()))
 
     # def k_comp_sigm(self, x, topk):
-    #     print 'run k_comp_sigm'
+    #     print('run k_comp_sigm')
     #     dim = int(x.get_shape()[1])
     #     if topk > dim:
     #         warnings.warn('topk should not be larger than dim: %s, found: %s, using %s' % (dim, topk, dim))
@@ -103,7 +107,7 @@ class KCompetitive(Layer):
     #     return res
 
     def k_comp_tanh(self, x, topk, factor=6.26):
-        print 'run k_comp_tanh'
+        print('run k_comp_tanh')
         dim = int(x.get_shape()[1])
         # batch_size = tf.to_float(tf.shape(x)[0])
         if topk > dim:
@@ -113,22 +117,24 @@ class KCompetitive(Layer):
         P = (x + tf.abs(x)) / 2
         N = (x - tf.abs(x)) / 2
 
-        values, indices = tf.nn.top_k(P, topk / 2) # indices will be [[0, 1], [2, 1]], values will be [[6., 2.], [5., 4.]]
+        values, indices = tf.nn.top_k(P,
+                                      topk / 2)  # indices will be [[0, 1], [2, 1]], values will be [[6., 2.], [5., 4.]]
         # We need to create full indices like [[0, 0], [0, 1], [1, 2], [1, 1]]
         my_range = tf.expand_dims(tf.range(0, tf.shape(indices)[0]), 1)  # will be [[0], [1]]
         my_range_repeated = tf.tile(my_range, [1, topk / 2])  # will be [[0, 0], [1, 1]]
-        full_indices = tf.stack([my_range_repeated, indices], axis=2) # change shapes to [N, k, 1] and [N, k, 1], to concatenate into [N, k, 2]
+        full_indices = tf.stack([my_range_repeated, indices],
+                                axis=2)  # change shapes to [N, k, 1] and [N, k, 1], to concatenate into [N, k, 2]
         full_indices = tf.reshape(full_indices, [-1, 2])
-        P_reset = tf.sparse_to_dense(full_indices, tf.shape(x), tf.reshape(values, [-1]), default_value=0., validate_indices=False)
-
+        P_reset = tf.sparse_to_dense(full_indices, tf.shape(x), tf.reshape(values, [-1]), default_value=0.,
+                                     validate_indices=False)
 
         values2, indices2 = tf.nn.top_k(-N, topk - topk / 2)
         my_range = tf.expand_dims(tf.range(0, tf.shape(indices2)[0]), 1)
         my_range_repeated = tf.tile(my_range, [1, topk - topk / 2])
         full_indices2 = tf.stack([my_range_repeated, indices2], axis=2)
         full_indices2 = tf.reshape(full_indices2, [-1, 2])
-        N_reset = tf.sparse_to_dense(full_indices2, tf.shape(x), tf.reshape(values2, [-1]), default_value=0., validate_indices=False)
-
+        N_reset = tf.sparse_to_dense(full_indices2, tf.shape(x), tf.reshape(values2, [-1]), default_value=0.,
+                                     validate_indices=False)
 
         # 1)
         # res = P_reset - N_reset
@@ -140,17 +146,19 @@ class KCompetitive(Layer):
         # 2)
         # factor = 0.
         # factor = 2. / topk
-        P_tmp = factor * tf.reduce_sum(P - P_reset, 1, keep_dims=True) # 6.26
+        P_tmp = factor * tf.reduce_sum(P - P_reset, 1, keep_dims=True)  # 6.26
         N_tmp = factor * tf.reduce_sum(-N - N_reset, 1, keep_dims=True)
-        P_reset = tf.sparse_to_dense(full_indices, tf.shape(x), tf.reshape(tf.add(values, P_tmp), [-1]), default_value=0., validate_indices=False)
-        N_reset = tf.sparse_to_dense(full_indices2, tf.shape(x), tf.reshape(tf.add(values2, N_tmp), [-1]), default_value=0., validate_indices=False)
+        P_reset = tf.sparse_to_dense(full_indices, tf.shape(x), tf.reshape(tf.add(values, P_tmp), [-1]),
+                                     default_value=0., validate_indices=False)
+        N_reset = tf.sparse_to_dense(full_indices2, tf.shape(x), tf.reshape(tf.add(values2, N_tmp), [-1]),
+                                     default_value=0., validate_indices=False)
 
         res = P_reset - N_reset
 
         return res
 
     # def k_comp_tanh_strict(self, x, topk):
-    #     print 'run k_comp_tanh_strict'
+    #     print('run k_comp_tanh_strict')
     #     dim = int(x.get_shape()[1])
     #     # batch_size = tf.to_float(tf.shape(x)[0])
     #     if topk > dim:
@@ -189,23 +197,25 @@ class KCompetitive(Layer):
     #     return res
 
     def kSparse(self, x, topk):
-        print 'run regular k-sparse'
+        print('run regular k-sparse')
         dim = int(x.get_shape()[1])
         if topk > dim:
             warnings.warn('Warning: topk should not be larger than dim: %s, found: %s, using %s' % (dim, topk, dim))
             topk = dim
 
         k = dim - topk
-        values, indices = tf.nn.top_k(-x, k) # indices will be [[0, 1], [2, 1]], values will be [[6., 2.], [5., 4.]]
+        values, indices = tf.nn.top_k(-x, k)  # indices will be [[0, 1], [2, 1]], values will be [[6., 2.], [5., 4.]]
 
         # We need to create full indices like [[0, 0], [0, 1], [1, 2], [1, 1]]
         my_range = tf.expand_dims(tf.range(0, tf.shape(indices)[0]), 1)  # will be [[0], [1]]
         my_range_repeated = tf.tile(my_range, [1, k])  # will be [[0, 0], [1, 1]]
 
-        full_indices = tf.stack([my_range_repeated, indices], axis=2) # change shapes to [N, k, 1] and [N, k, 1], to concatenate into [N, k, 2]
+        full_indices = tf.stack([my_range_repeated, indices],
+                                axis=2)  # change shapes to [N, k, 1] and [N, k, 1], to concatenate into [N, k, 2]
         full_indices = tf.reshape(full_indices, [-1, 2])
 
-        to_reset = tf.sparse_to_dense(full_indices, tf.shape(x), tf.reshape(values, [-1]), default_value=0., validate_indices=False)
+        to_reset = tf.sparse_to_dense(full_indices, tf.shape(x), tf.reshape(values, [-1]), default_value=0.,
+                                      validate_indices=False)
 
         res = tf.add(x, to_reset)
 
@@ -216,6 +226,7 @@ class Dense_tied(Dense):
     """
     A fully connected layer with tied weights.
     """
+
     def __init__(self, units,
                  activation=None, use_bias=True,
                  bias_initializer='zeros',
@@ -226,18 +237,17 @@ class Dense_tied(Dense):
         self.tied_to = tied_to
 
         super(Dense_tied, self).__init__(units=units,
-                 activation=activation, use_bias=use_bias,
-                 bias_initializer=bias_initializer,
-                 kernel_regularizer=kernel_regularizer, bias_regularizer=bias_regularizer,
-                 activity_regularizer=activity_regularizer,
-                 kernel_constraint=kernel_constraint, bias_constraint=bias_constraint,
-                 **kwargs)
+                                         activation=activation, use_bias=use_bias,
+                                         bias_initializer=bias_initializer,
+                                         kernel_regularizer=kernel_regularizer, bias_regularizer=bias_regularizer,
+                                         activity_regularizer=activity_regularizer,
+                                         kernel_constraint=kernel_constraint, bias_constraint=bias_constraint,
+                                         **kwargs)
 
     def build(self, input_shape):
         super(Dense_tied, self).build(input_shape)  # be sure you call this somewhere!
         if self.kernel in self.trainable_weights:
             self.trainable_weights.remove(self.kernel)
-
 
     def call(self, x, mask=None):
         # Use tied weights
@@ -246,6 +256,7 @@ class Dense_tied(Dense):
         if self.use_bias:
             output += self.bias
         return self.activation(output)
+
 
 class CustomModelCheckpoint(Callback):
     """Save the model after every epoch.
@@ -345,6 +356,7 @@ class CustomModelCheckpoint(Callback):
                 else:
                     model.save(filepath, overwrite=True)
 
+
 class VisualWeights(Callback):
     def __init__(self, save_path, per_epoch=15):
         super(VisualWeights, self).__init__()
@@ -360,6 +372,6 @@ class VisualWeights(Callback):
         if epoch % self.per_epoch == 0:
             weights = self.model.get_weights()[0]
             # weights /= np.max(np.abs(weights))
-            weights = unitmatrix(weights, axis=0) # normalize
+            weights = unitmatrix(weights, axis=0)  # normalize
             # weights[np.abs(weights) < 1e-2] = 0
-            heatmap(weights.T, '%s_%s%s'%(self.filename, epoch, self.ext))
+            heatmap(weights.T, '%s_%s%s' % (self.filename, epoch, self.ext))

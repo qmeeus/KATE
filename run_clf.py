@@ -70,15 +70,15 @@ def main():
         Y_test = Y[-n_test:]
 
     seed = 7
-    print 'train: %s, val: %s, test: %s' % (X_train.shape[0], X_val.shape[0], X_test.shape[0])
+    print('train: %s, val: %s, test: %s' % (X_train.shape[0], X_val.shape[0], X_test.shape[0]))
     if args.multilabel_clf:
         results = multilabel_classifier(X_train, Y_train, X_val, Y_val, \
                 X_test, Y_test, nb_epoch=args.n_epoch, batch_size=args.batch_size, seed=seed)
-        print 'f1 score on test set: macro_f1: %s, micro_f1: %s' % tuple(results)
+        print('f1 score on test set: macro_f1: %s, micro_f1: %s' % tuple(results))
     else:
         results = multiclass_classifier(X_train, Y_train, X_val, Y_val, \
                 X_test, Y_test, nb_epoch=args.n_epoch, batch_size=args.batch_size, seed=seed)
-        print 'acc on test set: %s' % results
+        print('acc on test set: %s' % results)
 
     import pdb;pdb.set_trace()
 

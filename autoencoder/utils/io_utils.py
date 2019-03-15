@@ -7,7 +7,7 @@ Created on Nov, 2016
 from __future__ import absolute_import
 
 import json
-import cPickle as pickle
+import pickle
 import marshal as m
 
 

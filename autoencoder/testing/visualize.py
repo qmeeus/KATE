@@ -368,7 +368,7 @@ def reuters_visualize_pca_2d(doc_codes, doc_labels, classes_to_visual, save_file
     #     if len(class_names.intersection(set(each))) > 1:
     #         x += 1
     #         pairs.append(class_names.intersection(set(each)))
-    # print x
+    # print(x)
 
 
     X = np.r_[list(codes)]

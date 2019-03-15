@@ -33,18 +33,18 @@ def init_stopwords():
     try:
         stopword_path = 'patterns/english_stopwords.txt'
         cached_stop_words = load_stopwords(os.path.join(os.path.split(__file__)[0], stopword_path))
-        print 'Loaded %s' % stopword_path
+        print('Loaded %s' % stopword_path)
     except:
         from nltk.corpus import stopwords
         cached_stop_words = stopwords.words("english")
-        print 'Loaded nltk.corpus.stopwords'
+        print('Loaded nltk.corpus.stopwords')
 
     return cached_stop_words
 
 def tiny_tokenize(text, stem=False, stop_words=[]):
     words = []
     for token in wordpunct_tokenize(re.sub('[%s]' % re.escape(string.punctuation), ' ', \
-            text.decode(encoding='UTF-8', errors='ignore'))):
+            text)):  # .decode(encoding='UTF-8', errors='ignore')
         if not token.isdigit() and not token in stop_words:
             if stem:
                 try:
@@ -76,7 +76,7 @@ def count_words(docs):
     # count the number of times a word appears in a corpus
     word_freq = defaultdict(lambda: 0)
     for each in docs:
-        for word, val in each.iteritems():
+        for word, val in each.items():
             word_freq[word] += val
 
     return word_freq
@@ -97,7 +97,7 @@ def load_data(corpus_path, recursive=False, stem=False, stop_words=False):
                 text = fp.read().lower()
                 # words = [word for word in word_tokenizer.tokenize(text) if word not in cached_stop_words]
                 # remove punctuations, stopwords and *unnecessary digits*, stemming
-                words = tiny_tokenize(text.decode('utf-8'), stem, cached_stop_words)
+                words = tiny_tokenize(text)  #.decode('utf-8'), stem, cached_stop_words)
 
                 # doc_name = os.path.basename(filename)
                 parent_name, child_name = os.path.split(filename)
@@ -124,7 +124,7 @@ def construct_corpus(corpus_path, training_phase, vocab_dict=None, threshold=5, 
         vocab_dict = build_vocab(word_freq, threshold=threshold, topn=topn)
 
     docs = generate_bow(doc_word_freq, vocab_dict)
-    new_word_freq = dict([(vocab_dict[word], freq) for word, freq in word_freq.iteritems() if word in vocab_dict])
+    new_word_freq = dict([(vocab_dict[word], freq) for word, freq in word_freq.items() if word in vocab_dict])
 
     return docs, vocab_dict, new_word_freq
 
@@ -135,9 +135,9 @@ def load_corpus(corpus_path):
 
 def generate_bow(doc_word_freq, vocab_dict):
     docs = {}
-    for key, val in doc_word_freq.iteritems():
+    for key, val in doc_word_freq.items():
         word_count = {}
-        for word, freq in val.iteritems():
+        for word, freq in val.items():
             try:
                 word_count[vocab_dict[word]] = freq
             except: # word is not in vocab, i.e., this word should be discarded
@@ -151,9 +151,9 @@ def build_vocab(word_freq, threshold=5, topn=None, start_idx=0):
     threshold only take effects when topn is None.
     words are indexed by overall frequency in the dataset.
     """
-    word_freq = sorted(word_freq.iteritems(), key=lambda d:d[1], reverse=True)
+    word_freq = sorted(word_freq.items(), key=lambda d:d[1], reverse=True)
     if topn:
-        word_freq = zip(*word_freq[:topn])[0]
+        word_freq = list(zip(*word_freq[:topn]))[0]
         vocab_dict = dict(zip(word_freq, range(start_idx, len(word_freq) + start_idx)))
     else:
         idx = start_idx
@@ -169,12 +169,12 @@ def construct_train_test_corpus(train_path, test_path, output, threshold=5, topn
     train_docs, vocab_dict, train_word_freq = construct_corpus(train_path, True, threshold=threshold, topn=topn, recursive=True)
     train_corpus = {'docs': train_docs, 'vocab': vocab_dict, 'word_freq': train_word_freq}
     dump_json(train_corpus, os.path.join(output, 'train.corpus'))
-    print 'Generated training corpus'
+    print('Generated training corpus')
 
     test_docs, _, _ = construct_corpus(test_path, False, vocab_dict=vocab_dict, recursive=True)
     test_corpus = {'docs': test_docs, 'vocab': vocab_dict}
     dump_json(test_corpus, os.path.join(output, 'test.corpus'))
-    print 'Generated test corpus'
+    print('Generated test corpus')
 
     return train_corpus, test_corpus
 
@@ -183,10 +183,10 @@ def corpus2libsvm(docs, doc_labels, output):
     '''
     data = []
     names = []
-    for key, val in docs.iteritems():
+    for key, val in docs.items():
         # label = doc_labels[key]
         label = 0
-        line = label if isinstance(label, list) else [str(label)] + ["%s:%s" % (int(x) + 1, y) for x, y in val.iteritems()]
+        line = label if isinstance(label, list) else [str(label)] + ["%s:%s" % (int(x) + 1, y) for x, y in val.items()]
         data.append(line)
         names.append(key)
     write_file(data, output)

@@ -8,3 +8,6 @@ imgs/
 others/
 *.txt
 *.csv
+.idea/
+outputs
+data/
